@@ -26,12 +26,13 @@
 	require_once 'Producto.php';
 
 	echo "Hola mundo<br/>";
-	echo $_GET['PATH_INFO'];
-	echo "<br/> {$_SERVER['REQUEST_METHOD'] } ";
+	
+	// Capturar la ruta desde PATH_INFO
+	$path_info = $_GET['PATH_INFO'] ?? '';
 
+	// Dividir la URL
+	$parameters = explode('/', trim($path_info, '/'));
 
-	// Obtener el recurso solicitado en la URL
-	$parameters = explode('/', $_GET['PATH_INFO']);
 	$recurso = $parameters[0] ?? null;
 	$id = $parameters[1] ?? null;
 
@@ -39,43 +40,46 @@
 	$data = file_get_contents("php://input");
 	$body = json_decode($data, true);
 
-	echo "<br> {$requestMethod} ";
+	echo "<br> Método: {$requestMethod} ";
+	echo "<br> Recurso: {$recurso} ";
+	echo "<br> ID: {$id} ";
 	echo "<hr><br><br>";
 
 	$producto = new Producto();
 
 	if ($recurso === 'producto') {
 
-	    $resultado = null;
+		$resultado = null;
 
-	    if ($requestMethod === 'GET' && $id) {
+		if ($requestMethod === 'GET' && $id) {
 
-	        $resultado = $producto->get($id);
+			$resultado = $producto->get($id);
 
-	     } elseif ($requestMethod === 'POST' && $body) {
+		} elseif ($requestMethod === 'POST' && $body) {
 
-	        $resultado = $producto->post($body);
+			$resultado = $producto->post($body);
 
-	     } elseif ($requestMethod === 'PUT' && $body) {
+		} elseif ($requestMethod === 'PUT' && $body) {
 
-	        $resultado = $producto->put($body);
+			$resultado = $producto->put($body);
 
-	     } elseif ($requestMethod === 'DELETE' && $id) {
+		} elseif ($requestMethod === 'DELETE' && $id) {
 
-	        $resultado = $producto->delete($id);
+			$resultado = $producto->delete($id);
 
-	     } else {
+		} else {
 
-	        $resultado = "Solicitud incorrecta";
+			$resultado = "Solicitud incorrecta";
 
-	     }
+		}
 
-	    echo $resultado . "<br>";
-
+		echo $resultado . "<br>";
+		
 	} else {
-	    echo "Recurso no encontrado <br>";
-	}
 
+		echo "Recurso no encontrado <br>";
+
+	}
 
 	/*
 
